@@ -1,8 +1,11 @@
 package me.springprojects.coursebackend.services;
 
+import me.springprojects.coursebackend.entities.Course;
 import me.springprojects.coursebackend.entities.User;
 import me.springprojects.coursebackend.entities.dto.UserDTO;
+import me.springprojects.coursebackend.exceptions.CourseNotFoundException;
 import me.springprojects.coursebackend.exceptions.UserNotFoundException;
+import me.springprojects.coursebackend.repositories.CourseRepository;
 import me.springprojects.coursebackend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -22,6 +25,9 @@ public class UserService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private CourseRepository courseRepository;
 
     public User createUser(UserDTO userDTO){
         User user = new User();
@@ -47,6 +53,22 @@ public class UserService {
                                            return userDTO;
                                        })
                                        .collect(Collectors.toList());
+    }
+
+    public void addUserToCourse(int userId, int courseId) throws UserNotFoundException, CourseNotFoundException {
+        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<Course> courseOptional = courseRepository.findById(courseId);
+        if(userOptional.isEmpty()) throw new UserNotFoundException("User with id " + userId + " has not been found.");
+        else if(courseOptional.isEmpty()) throw new CourseNotFoundException("Course with id " + courseId + " has not been found.");
+        User user = userOptional.get();
+        Course course = courseOptional.get();
+        user.getCourses().add(course);
+        course.getUsers().add(user);
+        userRepository.save(user);
+        courseRepository.save(course);
+        final String subject = "Course registration";
+        final String text = "Hello, " + user.getUsername() + ", you have successfully enrolled into the " + course.getCourseName() + " course!";
+        emailService.sendMessage(user.getEmail(), subject, text);
     }
 
     public User changeUserName(int userId, String username) throws UserNotFoundException{

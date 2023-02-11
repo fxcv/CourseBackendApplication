@@ -2,6 +2,7 @@ package me.springprojects.coursebackend.controllers;
 
 import me.springprojects.coursebackend.entities.User;
 import me.springprojects.coursebackend.entities.dto.UserDTO;
+import me.springprojects.coursebackend.exceptions.CourseNotFoundException;
 import me.springprojects.coursebackend.exceptions.UserNotFoundException;
 import me.springprojects.coursebackend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,11 @@ public class UserController {
     @GetMapping("/get")
     public List<UserDTO> getUsers(){
         return userService.getUsers();
+    }
+
+    @PutMapping("/addToCourse")
+    public void addUserToCourse(@RequestParam(name = "uid") int userId, @RequestParam(name = "cid") int courseId) throws UserNotFoundException, CourseNotFoundException {
+        userService.addUserToCourse(userId, courseId);
     }
 
     @PutMapping("/change/username")

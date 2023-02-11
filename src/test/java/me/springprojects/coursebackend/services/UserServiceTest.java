@@ -1,8 +1,11 @@
 package me.springprojects.coursebackend.services;
 
+import me.springprojects.coursebackend.entities.Course;
 import me.springprojects.coursebackend.entities.User;
 import me.springprojects.coursebackend.entities.dto.UserDTO;
+import me.springprojects.coursebackend.exceptions.CourseNotFoundException;
 import me.springprojects.coursebackend.exceptions.UserNotFoundException;
+import me.springprojects.coursebackend.repositories.CourseRepository;
 import me.springprojects.coursebackend.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +32,9 @@ class UserServiceTest {
 
     @MockBean
     private EmailService emailService;
+
+    @MockBean
+    private CourseRepository courseRepository;
 
     @Test
     public void createsUser(){
@@ -67,6 +74,24 @@ class UserServiceTest {
         assertEquals("user2email", res.get(1).getEmail());
         assertEquals("user1password", res.get(0).getPassword());
         assertEquals("user2password", res.get(1).getPassword());
+    }
+
+    @Test
+    public void addUserToCourse() throws UserNotFoundException, CourseNotFoundException{
+        User user = new User();
+        user.setCourses(new ArrayList<>());
+        Course course = new Course();
+        course.setUsers(new ArrayList<>());
+        given(userRepository.findById(any())).willReturn(Optional.of(user));
+        given(courseRepository.findById(any())).willReturn(Optional.of(course));
+
+        userService.addUserToCourse(999, 999);
+
+        verify(userRepository, times(1)).save(any());
+        verify(courseRepository, times(1)).save(any());
+        verify(emailService, times(1)).sendMessage(any(), any(), any());
+        assertTrue(user.getCourses().contains(course));
+        assertTrue(course.getUsers().contains(user));
     }
 
     @Test
@@ -112,6 +137,14 @@ class UserServiceTest {
         assertThrows(UserNotFoundException.class, () -> userService.changeUserName(userId, ""));
         assertThrows(UserNotFoundException.class, () -> userService.changeUserPassword(userId, ""));
         assertThrows(UserNotFoundException.class, () -> userService.changeUserMail(userId, ""));
+    }
+
+    @Test
+    public void throwsExceptionWhenCourseWithIdNotFound(){
+        final int courseId = Integer.MAX_VALUE;
+        given(userRepository.findById(any())).willReturn(Optional.of(new User()));
+
+        assertThrows(CourseNotFoundException.class, () -> userService.addUserToCourse(9999, courseId));
     }
 
 }
