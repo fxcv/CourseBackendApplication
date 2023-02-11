@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/user")
 public class UserController {
@@ -16,22 +18,27 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/add")
-    public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO){
-        return userService.createUser(userDTO);
+    public void createUser(@RequestBody UserDTO userDTO){
+        userService.createUser(userDTO);
+    }
+
+    @GetMapping("/get")
+    public List<UserDTO> getUsers(){
+        return userService.getUsers();
     }
 
     @PutMapping("/change/username")
-    public ResponseEntity<User> changeUserName(@RequestParam(name = "id") int userId, @RequestParam(name = "username") String username) throws UserNotFoundException {
-        return userService.changeUserName(userId, username);
+    public void changeUserName(@RequestParam(name = "id") int userId, @RequestParam(name = "username") String username) throws UserNotFoundException {
+        userService.changeUserName(userId, username);
     }
 
     @PutMapping("/change/email")
-    public ResponseEntity<User> changeUserMail(@RequestParam(name = "id") int userId, @RequestParam(name = "email") String email) throws UserNotFoundException {
-        return userService.changeUserMail(userId, email);
+    public void changeUserMail(@RequestParam(name = "id") int userId, @RequestParam(name = "email") String email) throws UserNotFoundException {
+        userService.changeUserMail(userId, email);
     }
 
     @PutMapping("/change/password")
-    public ResponseEntity<User> changeUserPassword(@RequestParam(name = "id") int userId, @RequestParam(name = "password") String password) throws UserNotFoundException {
-        return userService.changeUserPassword(userId, password);
+    public void changeUserPassword(@RequestParam(name = "id") int userId, @RequestParam(name = "password") String password) throws UserNotFoundException {
+        userService.changeUserPassword(userId, password);
     }
 }

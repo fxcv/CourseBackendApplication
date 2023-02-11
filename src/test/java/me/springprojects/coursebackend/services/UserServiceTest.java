@@ -36,14 +36,37 @@ class UserServiceTest {
         userDTO.setEmail("test1");
         userDTO.setPassword("test1");
 
-        ResponseEntity<User> res = userService.createUser(userDTO);
+        User res = userService.createUser(userDTO);
 
         verify(userRepository, times(1)).save(any());
         verify(emailService, times(1)).sendMessage(any(), any(), any());
-        assertEquals(200, res.getStatusCode().value());
-        assertEquals(userDTO.getUsername(), res.getBody().getUsername());
-        assertEquals(userDTO.getEmail(), res.getBody().getEmail());
-        assertEquals(userDTO.getPassword(), res.getBody().getPassword());
+        assertEquals(userDTO.getUsername(), res.getUsername());
+        assertEquals(userDTO.getEmail(), res.getEmail());
+        assertEquals(userDTO.getPassword(), res.getPassword());
+    }
+
+    @Test
+    public void getsUsers(){
+        User user1 = new User();
+        user1.setUsername("user1");
+        user1.setEmail("user1email");
+        user1.setPassword("user1password");
+        User user2 = new User();
+        user2.setUsername("user2");
+        user2.setEmail("user2email");
+        user2.setPassword("user2password");
+        List<User> users = List.of(user1, user2);
+        given(userRepository.findAll()).willReturn(users);
+
+        List<UserDTO> res = userService.getUsers();
+
+        assertEquals(2, res.size());
+        assertEquals("user1", res.get(0).getUsername());
+        assertEquals("user2", res.get(1).getUsername());
+        assertEquals("user1email", res.get(0).getEmail());
+        assertEquals("user2email", res.get(1).getEmail());
+        assertEquals("user1password", res.get(0).getPassword());
+        assertEquals("user2password", res.get(1).getPassword());
     }
 
     @Test
@@ -51,12 +74,11 @@ class UserServiceTest {
         User user = new User();
         given(userRepository.findById((any()))).willReturn(Optional.of(user));
 
-        ResponseEntity<User> res = userService.changeUserName(9999, "changedName");
+        User res = userService.changeUserName(9999, "changedName");
 
         verify(userRepository, times(1)).save(any());
         verify(emailService, times(1)).sendMessage(any(), any(), any());
-        assertEquals(200, res.getStatusCode().value());
-        assertEquals("changedName", res.getBody().getUsername());
+        assertEquals("changedName", res.getUsername());
     }
 
     @Test
@@ -64,12 +86,11 @@ class UserServiceTest {
         User user = new User();
         given(userRepository.findById((any()))).willReturn(Optional.of(user));
 
-        ResponseEntity<User> res = userService.changeUserMail(9999, "changedMail");
+        User res = userService.changeUserMail(9999, "changedMail");
 
         verify(userRepository, times(1)).save(any());
         verify(emailService, times(1)).sendMessage(any(), any(), any());
-        assertEquals(200, res.getStatusCode().value());
-        assertEquals("changedMail", res.getBody().getEmail());
+        assertEquals("changedMail", res.getEmail());
     }
 
     @Test
@@ -77,12 +98,11 @@ class UserServiceTest {
         User user = new User();
         given(userRepository.findById((any()))).willReturn(Optional.of(user));
 
-        ResponseEntity<User> res = userService.changeUserPassword(9999, "changedPassword");
+        User res = userService.changeUserPassword(9999, "changedPassword");
 
         verify(userRepository, times(1)).save(any());
         verify(emailService, times(1)).sendMessage(any(), any(), any());
-        assertEquals(200, res.getStatusCode().value());
-        assertEquals("changedPassword", res.getBody().getPassword());
+        assertEquals("changedPassword", res.getPassword());
     }
 
     @Test

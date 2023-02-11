@@ -3,7 +3,6 @@ package me.springprojects.coursebackend.entities;
 import jakarta.persistence.*;
 import me.springprojects.coursebackend.entities.enums.CourseCategory;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -20,9 +19,6 @@ public class Course {
 
     @Column(name = "course_name")
     private String courseName;
-
-    @Column(name = "course_creation_date")
-    private LocalDateTime courseCreationDate;
 
     @Column(name = "course_category")
     @Enumerated(value = EnumType.STRING)
@@ -53,14 +49,6 @@ public class Course {
 
     public void setCourseName(String courseName) {
         this.courseName = courseName;
-    }
-
-    public LocalDateTime getCourseCreationDate() {
-        return courseCreationDate;
-    }
-
-    public void setCourseCreationDate(LocalDateTime courseCreationDate) {
-        this.courseCreationDate = courseCreationDate;
     }
 
     public CourseCategory getCourseCategory() {

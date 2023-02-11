@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -21,7 +23,7 @@ public class UserService {
     @Autowired
     private EmailService emailService;
 
-    public ResponseEntity<User> createUser(UserDTO userDTO){
+    public User createUser(UserDTO userDTO){
         User user = new User();
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
@@ -32,10 +34,22 @@ public class UserService {
         final String subject = "Account creation";
         final String text = "Hi " + userDTO.getUsername() + ", thank you for creating an account on our website.";
         emailService.sendMessage(userDTO.getEmail(), subject, text);
-        return ResponseEntity.ok(user);
+        return user;
     }
 
-    public ResponseEntity<User> changeUserName(int userId, String username) throws UserNotFoundException{
+    public List<UserDTO> getUsers(){
+        return userRepository.findAll().stream()
+                                       .map(user -> {
+                                           UserDTO userDTO = new UserDTO();
+                                           userDTO.setUsername(user.getUsername());
+                                           userDTO.setEmail(user.getEmail());
+                                           userDTO.setPassword(user.getPassword());
+                                           return userDTO;
+                                       })
+                                       .collect(Collectors.toList());
+    }
+
+    public User changeUserName(int userId, String username) throws UserNotFoundException{
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()) throw new UserNotFoundException("User with id " + userId + " has not been found.");
         User user = userOptional.get();
@@ -44,10 +58,10 @@ public class UserService {
         final String subject = "Username changed";
         final String text = "Hi, you have changed your username to: " + username;
         emailService.sendMessage(user.getEmail(), subject, text);
-        return ResponseEntity.ok(user);
+        return user;
     }
 
-    public ResponseEntity<User> changeUserMail(int userId, String email) throws UserNotFoundException{
+    public User changeUserMail(int userId, String email) throws UserNotFoundException{
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()) throw new UserNotFoundException("User with id " + userId + " has not been found.");
         User user = userOptional.get();
@@ -57,10 +71,10 @@ public class UserService {
         final String subject = "Email changed";
         final String text = "Hi, you have changed your email to: " + email + ", this email will no longer be associated with your account.";
         emailService.sendMessage(oldEmail, subject, text);
-        return ResponseEntity.ok(user);
+        return user;
     }
 
-    public ResponseEntity<User> changeUserPassword(int userId, String password) throws UserNotFoundException{
+    public User changeUserPassword(int userId, String password) throws UserNotFoundException{
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()) throw new UserNotFoundException("User with id " + userId + " has not been found.");
         User user = userOptional.get();
@@ -69,7 +83,7 @@ public class UserService {
         final String subject = "Password changed";
         final String text = "Hi, you have changed your password to: " + password;
         emailService.sendMessage(user.getEmail(), subject, text);
-        return ResponseEntity.ok(user);
+        return user;
     }
 
 }
