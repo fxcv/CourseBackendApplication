@@ -15,7 +15,7 @@ public class Course {
     private int id;
 
     @JoinColumn(name = "course_owner")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User courseOwner;
 
     @Column(name = "course_name")
@@ -28,7 +28,7 @@ public class Course {
     @Enumerated(value = EnumType.STRING)
     private CourseCategory courseCategory;
 
-    @ManyToMany(mappedBy = "courses")
+    @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)
     private List<User> users;
 
     public int getId() {

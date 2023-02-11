@@ -21,12 +21,12 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "courseOwner")
+    @OneToMany(mappedBy = "courseOwner", fetch = FetchType.LAZY)
     private List<Course> coursesCreated;
 
     @JoinTable(name = "user_course", joinColumns = @JoinColumn(name = "user_id"),
                                      inverseJoinColumns = @JoinColumn(name = "course_id"))
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Course> courses;
 
     public int getId() {
