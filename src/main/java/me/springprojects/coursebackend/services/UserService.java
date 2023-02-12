@@ -71,6 +71,22 @@ public class UserService {
         emailService.sendMessage(user.getEmail(), subject, text);
     }
 
+    public void deleteUserFromCourse(int userId, int courseId) throws UserNotFoundException, CourseNotFoundException{
+        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<Course> courseOptional = courseRepository.findById(courseId);
+        if(userOptional.isEmpty()) throw new UserNotFoundException("User with id " + userId + " has not been found.");
+        else if(courseOptional.isEmpty()) throw new CourseNotFoundException("Course with id " + courseId + " has not been found.");
+        User user = userOptional.get();
+        Course course = courseOptional.get();
+        user.getCourses().remove(course);
+        course.getUsers().remove(user);
+        userRepository.save(user);
+        courseRepository.save(course);
+        final String subject = "Course resignation";
+        final String text = "Hello, " + user.getUsername() + ", you have successfully resignated from the " + course.getCourseName() + " course!";
+        emailService.sendMessage(user.getEmail(), subject, text);
+    }
+
     public User changeUserName(int userId, String username) throws UserNotFoundException{
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()) throw new UserNotFoundException("User with id " + userId + " has not been found.");

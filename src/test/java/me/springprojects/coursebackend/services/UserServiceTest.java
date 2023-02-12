@@ -95,6 +95,26 @@ class UserServiceTest {
     }
 
     @Test
+    public void deletesUserFromCourse() throws UserNotFoundException, CourseNotFoundException{
+        User user = new User();
+        user.setCourses(new ArrayList<>());
+        Course course = new Course();
+        course.setUsers(new ArrayList<>());
+        user.getCourses().add(course);
+        course.getUsers().add(user);
+        given(userRepository.findById(any())).willReturn(Optional.of(user));
+        given(courseRepository.findById(any())).willReturn(Optional.of(course));
+
+        userService.deleteUserFromCourse(999, 999);
+
+        verify(userRepository, times(1)).save(any());
+        verify(courseRepository, times(1)).save(any());
+        verify(emailService, times(1)).sendMessage(any(), any(), any());
+        assertFalse(user.getCourses().contains(course));
+        assertFalse(course.getUsers().contains(user));
+    }
+
+    @Test
     public void changesUsername() throws UserNotFoundException{
         User user = new User();
         given(userRepository.findById((any()))).willReturn(Optional.of(user));

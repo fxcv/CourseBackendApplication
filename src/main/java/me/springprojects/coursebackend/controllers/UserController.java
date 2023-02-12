@@ -33,6 +33,11 @@ public class UserController {
         userService.addUserToCourse(userId, courseId);
     }
 
+    @DeleteMapping("/deleteFromCourse")
+    public void deleteUserFromCourse(@RequestParam(name = "uid") int userId, @RequestParam(name = "cid") int courseId) throws UserNotFoundException, CourseNotFoundException {
+        userService.deleteUserFromCourse(userId, courseId);
+    }
+
     @PutMapping("/change/username")
     public void changeUserName(@RequestParam(name = "id") int userId, @RequestParam(name = "username") String username) throws UserNotFoundException {
         userService.changeUserName(userId, username);
