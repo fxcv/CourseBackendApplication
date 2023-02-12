@@ -55,6 +55,10 @@ public class UserService {
                                        .collect(Collectors.toList());
     }
 
+    public boolean checkIfCorrectLogin(String username, String password){
+        return userRepository.checkIfCorrectLogin(username, password);
+    }
+
     public void addUserToCourse(int userId, int courseId) throws UserNotFoundException, CourseNotFoundException {
         Optional<User> userOptional = userRepository.findById(userId);
         Optional<Course> courseOptional = courseRepository.findById(courseId);

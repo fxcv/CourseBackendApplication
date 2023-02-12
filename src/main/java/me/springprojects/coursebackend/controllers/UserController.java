@@ -28,6 +28,11 @@ public class UserController {
         return userService.getUsers();
     }
 
+    @GetMapping("/checkLogin")
+    public boolean checkIfCorrectLogin(@RequestParam(name = "uname") String username, @RequestParam(name = "uemail") String email){
+        return userService.checkIfCorrectLogin(username, email);
+    }
+
     @PutMapping("/addToCourse")
     public void addUserToCourse(@RequestParam(name = "uid") int userId, @RequestParam(name = "cid") int courseId) throws UserNotFoundException, CourseNotFoundException {
         userService.addUserToCourse(userId, courseId);
