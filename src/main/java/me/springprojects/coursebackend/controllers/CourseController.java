@@ -1,11 +1,8 @@
 package me.springprojects.coursebackend.controllers;
 
-import me.springprojects.coursebackend.entities.Course;
 import me.springprojects.coursebackend.entities.dto.CourseDTO;
-import me.springprojects.coursebackend.exceptions.UserNotFoundException;
 import me.springprojects.coursebackend.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,11 +11,15 @@ import java.util.List;
 @RequestMapping(path = "/course")
 public class CourseController {
 
+    private final CourseService courseService;
+
     @Autowired
-    private CourseService courseService;
+    public CourseController(CourseService courseService) {
+        this.courseService = courseService;
+    }
 
     @PostMapping("/add")
-    public void createCourse(@RequestBody CourseDTO courseDTO, @RequestParam(name = "id") int userId) throws UserNotFoundException {
+    public void createCourse(@RequestBody CourseDTO courseDTO, @RequestParam(name = "id") int userId) {
         courseService.createCourse(courseDTO, userId);
     }
 

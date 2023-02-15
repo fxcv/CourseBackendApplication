@@ -1,12 +1,8 @@
 package me.springprojects.coursebackend.controllers;
 
-import me.springprojects.coursebackend.entities.User;
 import me.springprojects.coursebackend.entities.dto.UserDTO;
-import me.springprojects.coursebackend.exceptions.CourseNotFoundException;
-import me.springprojects.coursebackend.exceptions.UserNotFoundException;
 import me.springprojects.coursebackend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +11,12 @@ import java.util.List;
 @RequestMapping(path = "/user")
 public class UserController {
 
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/add")
     public void createUser(@RequestBody UserDTO userDTO){
@@ -34,27 +34,27 @@ public class UserController {
     }
 
     @PutMapping("/addToCourse")
-    public void addUserToCourse(@RequestParam(name = "uid") int userId, @RequestParam(name = "cid") int courseId) throws UserNotFoundException, CourseNotFoundException {
+    public void addUserToCourse(@RequestParam(name = "uid") int userId, @RequestParam(name = "cid") int courseId)  {
         userService.addUserToCourse(userId, courseId);
     }
 
     @DeleteMapping("/deleteFromCourse")
-    public void deleteUserFromCourse(@RequestParam(name = "uid") int userId, @RequestParam(name = "cid") int courseId) throws UserNotFoundException, CourseNotFoundException {
+    public void deleteUserFromCourse(@RequestParam(name = "uid") int userId, @RequestParam(name = "cid") int courseId)  {
         userService.deleteUserFromCourse(userId, courseId);
     }
 
     @PutMapping("/change/username")
-    public void changeUserName(@RequestParam(name = "id") int userId, @RequestParam(name = "username") String username) throws UserNotFoundException {
+    public void changeUserName(@RequestParam(name = "id") int userId, @RequestParam(name = "username") String username) {
         userService.changeUserName(userId, username);
     }
 
     @PutMapping("/change/email")
-    public void changeUserMail(@RequestParam(name = "id") int userId, @RequestParam(name = "email") String email) throws UserNotFoundException {
+    public void changeUserMail(@RequestParam(name = "id") int userId, @RequestParam(name = "email") String email)  {
         userService.changeUserMail(userId, email);
     }
 
     @PutMapping("/change/password")
-    public void changeUserPassword(@RequestParam(name = "id") int userId, @RequestParam(name = "password") String password) throws UserNotFoundException {
+    public void changeUserPassword(@RequestParam(name = "id") int userId, @RequestParam(name = "password") String password)  {
         userService.changeUserPassword(userId, password);
     }
 }

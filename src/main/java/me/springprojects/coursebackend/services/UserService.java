@@ -8,8 +8,6 @@ import me.springprojects.coursebackend.exceptions.UserNotFoundException;
 import me.springprojects.coursebackend.repositories.CourseRepository;
 import me.springprojects.coursebackend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,14 +18,16 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final CourseRepository courseRepository;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private CourseRepository courseRepository;
+    public UserService(UserRepository userRepository, EmailService emailService, CourseRepository courseRepository) {
+        this.userRepository = userRepository;
+        this.emailService = emailService;
+        this.courseRepository = courseRepository;
+    }
 
     public User createUser(UserDTO userDTO){
         User user = new User();
@@ -59,7 +59,7 @@ public class UserService {
         return userRepository.checkIfCorrectLogin(username, password);
     }
 
-    public void addUserToCourse(int userId, int courseId) throws UserNotFoundException, CourseNotFoundException {
+    public void addUserToCourse(int userId, int courseId){
         Optional<User> userOptional = userRepository.findById(userId);
         Optional<Course> courseOptional = courseRepository.findById(courseId);
         if(userOptional.isEmpty()) throw new UserNotFoundException("User with id " + userId + " has not been found.");
@@ -75,7 +75,7 @@ public class UserService {
         emailService.sendMessage(user.getEmail(), subject, text);
     }
 
-    public void deleteUserFromCourse(int userId, int courseId) throws UserNotFoundException, CourseNotFoundException{
+    public void deleteUserFromCourse(int userId, int courseId){
         Optional<User> userOptional = userRepository.findById(userId);
         Optional<Course> courseOptional = courseRepository.findById(courseId);
         if(userOptional.isEmpty()) throw new UserNotFoundException("User with id " + userId + " has not been found.");
@@ -91,7 +91,7 @@ public class UserService {
         emailService.sendMessage(user.getEmail(), subject, text);
     }
 
-    public User changeUserName(int userId, String username) throws UserNotFoundException{
+    public User changeUserName(int userId, String username) {
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()) throw new UserNotFoundException("User with id " + userId + " has not been found.");
         User user = userOptional.get();
@@ -103,7 +103,7 @@ public class UserService {
         return user;
     }
 
-    public User changeUserMail(int userId, String email) throws UserNotFoundException{
+    public User changeUserMail(int userId, String email) {
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()) throw new UserNotFoundException("User with id " + userId + " has not been found.");
         User user = userOptional.get();
@@ -116,7 +116,7 @@ public class UserService {
         return user;
     }
 
-    public User changeUserPassword(int userId, String password) throws UserNotFoundException{
+    public User changeUserPassword(int userId, String password) {
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()) throw new UserNotFoundException("User with id " + userId + " has not been found.");
         User user = userOptional.get();

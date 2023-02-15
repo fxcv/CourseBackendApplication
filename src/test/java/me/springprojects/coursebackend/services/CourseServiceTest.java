@@ -3,7 +3,6 @@ package me.springprojects.coursebackend.services;
 import me.springprojects.coursebackend.entities.Course;
 import me.springprojects.coursebackend.entities.User;
 import me.springprojects.coursebackend.entities.dto.CourseDTO;
-import me.springprojects.coursebackend.entities.dto.UserDTO;
 import me.springprojects.coursebackend.entities.enums.CourseCategory;
 import me.springprojects.coursebackend.exceptions.UserNotFoundException;
 import me.springprojects.coursebackend.repositories.CourseRepository;
@@ -12,10 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
